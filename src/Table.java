@@ -5,7 +5,7 @@ import java.io.IOException;
 //        ( o.o )
 //         > ^ <
 
-public class Table extends Entity{
+public class Table extends Entity {
 
     GamePanel gp;
     public Table(){

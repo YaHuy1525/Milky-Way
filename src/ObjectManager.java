@@ -1,52 +1,67 @@
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Objects;
 
-public class ObjectManager extends Entity{
+public class ObjectManager {
     GamePanel gp;
-    TileManager tileManager;
-    ArrayList<Entity> objects;
     public ObjectManager(GamePanel gp){
         this.gp = gp;
-        objects = new ArrayList<>();
     }
-    public void getObjectImage(){
-        try {
-            Entity tree = new Entity(new Rectangle(0, 0, 48, 48));
-            tree.image = ImageIO.read(getClass().getResourceAsStream("/Tiles/tree.png"));
-            tree.collision = false;
-            tree.direction = "right";
-            objects.add(tree);
-            Entity car = new Entity(new Rectangle(0, 0, 48 * 2, 48));
-            car.image = ImageIO.read(getClass().getResourceAsStream("/Tiles/table.png"));
-            car.collision = false;
-            car.direction = "left";
-            objects.add(car);
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
+    public void setupCars(){
+        gp.objects[0] = new BlueCar(gp);
+        gp.objects[0].worldX = gp.tilesize * 8;
+        gp.objects[0].worldY = gp.tilesize * 4;
+
+        gp.objects[1] = new RedCar(gp);
+        gp.objects[1].worldX = gp.tilesize * 5;
+        gp.objects[1].worldY = gp.tilesize * 9;
+
+        gp.objects[2] = new CyanCar(gp);
+        gp.objects[2].worldX = gp.tilesize * 4;
+        gp.objects[2].worldY = gp.tilesize * 5;
+
+        gp.objects[3] = new GreenCar(gp);
+        gp.objects[3].worldX = gp.tilesize * 1;
+        gp.objects[3].worldY = gp.tilesize * 10;
+
+        gp.objects[4] = new OrangeCar(gp);
+        gp.objects[4].worldX = gp.tilesize * 2;
+        gp.objects[4].worldY = gp.tilesize * 11;
+        gp.objects[4].direction = "right";
+
+        gp.objects[5] = new PurpleCar(gp);
+        gp.objects[5].worldX = gp.tilesize * 2;
+        gp.objects[5].worldY = gp.tilesize * 15;
+
+        gp.objects[6] = new YellowCar(gp);
+        gp.objects[6].worldX = gp.tilesize * 1;
+        gp.objects[6].worldY = gp.tilesize * 16;
+
+        gp.objects[7] = new RedCar(gp);
+        gp.objects[7].worldX = gp.tilesize * 6;
+        gp.objects[7].worldY = gp.tilesize * 17;
     }
 
     public void updateObject(){
-        for (Entity object : objects){
-            switch (object.direction){
-                case "right":
-                    object.worldX += object.speed;
-                    break;
-                case "left":
-                    object.worldX -= object.speed;
-                    break;
+        for (int i = 0; i < gp.objects.length; i++){
+            if (gp.objects[i] != null){
+                switch (gp.objects[i].direction){
+                    case "right":
+                        gp.objects[i].image = gp.objects[i].right1;
+                        gp.objects[i].worldX += gp.objects[i].speed;
+                        break;
+                    case "left":
+                        gp.objects[i].image = gp.objects[i].left1;
+                        gp.objects[i].worldX -= gp.objects[i].speed;
+                        break;
+                }
+                int worldCol = gp.objects[i].worldX / gp.tilesize;
+                if(worldCol < 0){
+                    gp.objects[i].direction = "right";
+                    gp.objects[i].image = gp.objects[i].right1;
+                }
+                else if(worldCol > 7){
+                    gp.objects[i].direction = "left";
+                    gp.objects[i].image = gp.objects[i].left1;
+                }
             }
-        }
-    }
-    public void draw(Graphics2D g2){
-        for (Entity object : objects) {
-            int screenX = object.worldX - gp.player.worldX + gp.player.screenX;
-            int screenY = object.worldY - gp.player.worldY + gp.player.screenY;
-            g2.drawImage(object.image, screenX, screenY, gp.tilesize, gp.tilesize, null);
         }
     }
 }

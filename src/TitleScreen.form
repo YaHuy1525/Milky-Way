@@ -51,7 +51,7 @@
         <properties>
           <background color="-16777216"/>
           <enabled value="true"/>
-          <font name="Tahoma" size="16" style="1"/>
+          <font name="Tahoma" size="28" style="1"/>
           <foreground color="-723979"/>
           <hideActionText value="false"/>
           <horizontalAlignment value="0"/>

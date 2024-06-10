@@ -1,6 +1,7 @@
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicTreeUI;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class GamePanel extends JPanel implements Runnable{
     //Screen Camera
@@ -16,25 +17,26 @@ public class GamePanel extends JPanel implements Runnable{
     //World Camera
     final int maxWorldcol = 50;
     final int maxWorldrow = 50;
-    final int worldWidth = maxWorldcol * tilesize;
-    final int worldLength = maxWorldrow + tilesize;
-
-    public int currentScreen = 0;
     public collisionChecker cChecker = new collisionChecker(this);
     Keyhandler keyhandler = new Keyhandler();
     public Player player = new Player(this, keyhandler);
     public TileManager tileM = new TileManager(this);
+    public Entity[] objects = new Entity[10];
     public ObjectManager objectM = new ObjectManager(this);
+    public GUI gui = new GUI(this);
     Thread gamethread;
 
     public GamePanel(){
-    }
-    public void setupGame() {
         this.setPreferredSize(new Dimension(screenlength, screenwidth));
         this.setBackground(Color.BLACK);
         this.addKeyListener(keyhandler);
         this.setFocusable(true);
-        //this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        setupGame();
+    }
+    public void setupGame() {
+        if (tileM.currentMap.equals(tileM.road)){
+            objectM.setupCars();
+        }
     }
     public void startgamethread(){
         gamethread = new Thread(this);
@@ -68,7 +70,7 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
      public void update(){
-        tileM.updateObject();
+        objectM.updateObject();
         player.update();
      }
      @Override
@@ -77,8 +79,18 @@ public class GamePanel extends JPanel implements Runnable{
          Graphics2D g2 = (Graphics2D) g;
          tileM.draw(g2);
          tileM.draw2Layer(g2);
-         objectM.draw(g2);
          player.draw(g2);
+         if (tileM.currentMap.equals(tileM.road)){
+             for (Entity object : objects) {
+                 if (object != null) {
+                     object.draw(g2);
+                 }
+             }
+         }
+         if (gui.deathScreen){
+             gui.drawDeathScreen(g2);
+         }
+         gui.draw(g2);
          g2.dispose();
      }
 }

@@ -1,8 +1,6 @@
 import javax.imageio.ImageIO;
-import javax.management.StringValueExp;
 import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
 
 public class TileManager extends Tile{
     public String currentMap;
@@ -15,15 +13,12 @@ public class TileManager extends Tile{
     Tile[] tile;
     int[][] mapTileNum;
     int[][] secondLayer;
-    ArrayList<Entity> objects;
     public TileManager(GamePanel gp){
-        objects = new ArrayList<>();
         this.gp = gp;
         tile = new Tile[15];
         mapTileNum = new int[gp.maxWorldrow][gp.maxWorldcol];
         secondLayer = new int[gp.maxWorldrow][gp.maxWorldcol];
         getTileImage();
-        getObjectImage();
         setDefaultValue();
         setTile(currentMap);
         set2ndTile(current_2ndLayer);
@@ -65,7 +60,7 @@ public class TileManager extends Tile{
             tile[1].image = ImageIO.read(getClass().getResourceAsStream("/Tiles/grass.png"));
 
             tile[2] = new Tile();
-            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/Tiles/Black.png.webp"));
+            tile[2].image = ImageIO.read(getClass().getResourceAsStream("/Tiles/black.png"));
             tile[2].collision = true;
 
             tile[3] = new Tile();
@@ -75,7 +70,7 @@ public class TileManager extends Tile{
             tile[4].image = ImageIO.read(getClass().getResourceAsStream("/Tiles/wood floor.png"));
 
             tile[5] = new Tile();
-            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/Tiles/table.png"));
+            tile[5].image = ImageIO.read(getClass().getResourceAsStream("/Tiles/boulder.png"));
             tile[5].collision = true;
 
             tile[6] = new Tile();
@@ -98,40 +93,10 @@ public class TileManager extends Tile{
             tile[10].image = ImageIO.read(getClass().getResourceAsStream("/Tiles/onGrass.png"));
 
             tile[11] = new Tile();
-            tile[11].image = ImageIO.read(getClass().getResourceAsStream("/Tiles/tree.png"));
+            tile[11].image = ImageIO.read(getClass().getResourceAsStream("/Tiles/conner_wall.png"));
         }
         catch(IOException e){
             e.printStackTrace();
-        }
-    }
-    public void getObjectImage(){
-        try {
-            Entity tree = new Entity(new Rectangle(0, 0, 48, 48));
-            tree.image = ImageIO.read(getClass().getResourceAsStream("/Tiles/tree.png"));
-            tree.collision = false;
-            tree.direction = "right";
-            objects.add(tree);
-            Entity car = new Entity(new Rectangle(0, 0, 48 * 2, 48));
-            car.image = ImageIO.read(getClass().getResourceAsStream("/Tiles/table.png"));
-            car.collision = false;
-            car.direction = "left";
-            objects.add(car);
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
-    }
-
-    public void updateObject(){
-        for (Entity object : objects){
-            switch (object.direction){
-                case "right":
-                    object.worldX += object.speed;
-                    break;
-                case "left":
-                    object.worldX -= object.speed;
-                    break;
-            }
         }
     }
     public void setDefaultValue(){
@@ -140,18 +105,18 @@ public class TileManager extends Tile{
     }
 
     public void draw(Graphics2D g2){
-        int maxCol = getMapRow(currentMap);
-        int maxRow = getMapCol(currentMap);
-
         int worldCol = 0;
         int worldRow = 0;
 
+        int maxCol = getMapCol(currentMap);
+        int maxRow = getMapRow(currentMap);
+
         while (worldCol < maxCol && worldRow < maxRow){
-            int worldX = worldRow * gp.tilesize;
-            int worldY = worldCol * gp.tilesize;
+            int worldX = worldCol * gp.tilesize;
+            int worldY = worldRow * gp.tilesize;
             int screenX = worldX - gp.player.worldX + gp.player.screenX;
             int screenY = worldY - gp.player.worldY + gp.player.screenY;
-            g2.drawImage(tile[mapTileNum[worldCol][worldRow]].image, screenX, screenY, gp.tilesize, gp.tilesize, null);
+            g2.drawImage(tile[mapTileNum[worldRow][worldCol]].image, screenX, screenY, gp.tilesize, gp.tilesize, null);
             worldCol++;
             if (worldCol == maxCol){
                 worldCol = 0;
@@ -163,28 +128,17 @@ public class TileManager extends Tile{
         int worldCol = 0;
         int worldRow = 0;
 
-        int maxCol = getMapRow(current_2ndLayer);
-        int maxRow = getMapCol(current_2ndLayer);
+        int maxCol = getMapCol(current_2ndLayer);
+        int maxRow = getMapRow(current_2ndLayer);
+
         while (worldCol < maxCol && worldRow < maxRow){
-            int worldX = worldRow * gp.tilesize;
-            int worldY = worldCol * gp.tilesize;
+            int worldX = worldCol * gp.tilesize;
+            int worldY = worldRow * gp.tilesize;
             int screenX = worldX - gp.player.worldX + gp.player.screenX;
             int screenY = worldY - gp.player.worldY + gp.player.screenY;
-            if (secondLayer[worldCol][worldRow] != 0){
-                int num = secondLayer[worldCol][worldRow];
-                switch(num){
-                    case 5:
-                        g2.drawImage(tile[num].image, screenX, screenY, gp.tilesize * 2, gp.tilesize, null);
-                        break;
-                    case 1:
-                        g2.drawImage(objects.get(0).image, screenX, screenY, gp.tilesize * 3, gp.tilesize * 3, null);
-                        break;
-                    case 2:
-                        g2.drawImage(objects.get(1).image, screenX, screenY, gp.tilesize * 2, gp.tilesize * 1, null);
-                        break;
-                    default:
-                        g2.drawImage(tile[num].image, screenX, screenY, gp.tilesize, gp.tilesize, null);
-                }
+            int num = secondLayer[worldRow][worldCol];
+            if (num != 0){
+                g2.drawImage(tile[num].image, screenX, screenY, gp.tilesize, gp.tilesize, null);
             }
             worldCol++;
             if (worldCol == maxCol){

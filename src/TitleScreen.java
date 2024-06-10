@@ -23,12 +23,10 @@ public class TitleScreen extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(e.getSource() == playbutton){
-                    gp.currentScreen = 1;
                     gp.setupGame();
                     dispose();
                     gp.setVisible(true);
                     JFrame window = new JFrame("Milky Way");
-                    //window.setSize(16,12);
                     window.setResizable(false);
                     window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     JLabel label = new JLabel();

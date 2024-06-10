@@ -24,11 +24,18 @@ public class collisionChecker {
                 gp.tileM.setTile(gp.tileM.currentMap);
                 gp.tileM.current_2ndLayer = gp.tileM.road_2ndLayer;
                 gp.tileM.set2ndTile(gp.tileM.current_2ndLayer);
-                gp.player.worldX = gp.tilesize * 3;
-                gp.player.worldY = gp.tilesize * 0;
+                gp.player.worldX = gp.tilesize * 4;
+                gp.player.worldY = gp.tilesize * 1;
+                gp.objectM.setupCars();;
             }
         }
-
+         //Winning condition
+        if(Objects.equals(gp.tileM.currentMap, gp.tileM.road)){
+            if (entityBottomworldY > gp.tilesize * 19){
+                gp.player.worldX = gp.tilesize * 4;
+                gp.player.worldY = gp.tilesize * 1;
+            }
+        }
         switch(entity.direction){
             case "up":
                 entityTopRow = (entityTopworldY - entity.speed)/gp.tilesize;
@@ -73,6 +80,26 @@ public class collisionChecker {
             default:
                 entity.collision = false;
                 break;
+        }
+    }
+
+    public void checkObject(Entity entity){
+
+        for (int i = 0; i < gp.objects.length; i++){
+            if(gp.objects[i] != null){
+                entity.hitBox.x = entity.worldX + entity.hitBox.x;
+                entity.hitBox.y = entity.worldY + entity.hitBox.y;
+                gp.objects[i].hitBox.x = gp.objects[i].hitBox.x + gp.objects[i].worldX;
+                gp.objects[i].hitBox.y = gp.objects[i].hitBox.y + gp.objects[i].worldY;
+                if(entity.hitBox.intersects(gp.objects[i].hitBox)){
+                    //entity.collision = true;
+                    gp.player.death = true;
+                }
+                entity.hitBox.x = entity.defaultHitBoxX;
+                entity.hitBox.y = entity.defaultHitBoxY;
+                gp.objects[i].hitBox.x = gp.objects[i].defaultHitBoxX;
+                gp.objects[i].hitBox.y = gp.objects[i].defaultHitBoxY;
+            }
         }
     }
 }
